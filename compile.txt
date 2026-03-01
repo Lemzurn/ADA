@@ -1,6 +1,13 @@
 sudo apt update
 sudo apt install flex gcc
 
+
+
+
+nano wordcount.l
+
+
+
 lex wordcount.l
 gcc lex.yy.c -ll
 ./a.out
