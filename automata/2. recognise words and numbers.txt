@@ -1,0 +1,18 @@
+%{
+#include <stdio.h>
+%}
+
+%%
+[a-zA-Z]+   { printf("word: %s\n", yytext); }
+[0-9]+      { printf("Number: %s\n", yytext); }
+[ \t\n]+    ; /* Ignores spaces, tabs, and newlines smoothly */
+.           ; /* Ignores special characters */
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter input:\n");
+    yylex();
+    return 0;
+}

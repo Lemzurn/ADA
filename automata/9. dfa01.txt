@@ -1,0 +1,17 @@
+%{
+#include <stdio.h>
+%}
+
+%%
+^[01]*01[01]*$ { printf("Accepted : contains substring 01\n"); }
+^[01]+$        { printf("Rejected : Doesnot contain substring 01\n"); }
+\n|.           ;
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a binary string:\n");
+    yylex();
+    return 0;
+}

@@ -1,0 +1,19 @@
+%{
+#include <stdio.h>
+int v = 0, c = 0;
+%}
+
+%%
+[aeiouAEIOU] { printf("vowel: %s\n", yytext); v++; }
+[a-zA-Z]     { printf("consonant: %s\n", yytext); c++; }
+\n           { printf("Total vowels: %d\nTotal consonants: %d\n", v, c); v = 0; c = 0; }
+.            ; /* Ignore spaces and punctuation */
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a word:\n");
+    yylex();
+    return 0;
+}

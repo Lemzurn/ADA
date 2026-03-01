@@ -1,0 +1,18 @@
+%{
+#include <stdio.h>
+int count = 0;
+%}
+
+%%
+[a-zA-Z0-9]+  { count++; } /* Matches any word/number and increments counter */
+\n            { printf("Number of words : %d\n", count); count = 0; } /* Prints output when you press Enter */
+.             ; /* Ignores everything else (spaces, symbols) */
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter text:\n");
+    yylex();
+    return 0;
+}
