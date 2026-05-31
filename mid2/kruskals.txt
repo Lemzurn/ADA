@@ -1,0 +1,39 @@
+def find_parent(parent, i):
+    if parent[i] == i:
+        return i
+    return find_parent(parent, parent[i])
+
+def union(parent, u, v):
+    root_u = find_parent(parent, u)
+    root_v = find_parent(parent, v)
+    parent[root_u] = root_v
+
+def kruskal_mst(vertices, edges):
+    edges.sort(key=lambda x: x[2])
+    parent = [i for i in range(vertices)]
+    total_cost = 0
+    print("\n--- Minimum Spanning Tree ---")
+    print("Edge \tWeight")
+    
+    for u, v, weight in edges:
+        root_u = find_parent(parent, u)
+        root_v = find_parent(parent, v)
+        if root_u != root_v:
+            union(parent, root_u, root_v)
+            total_cost += weight
+            print(f"{u} - {v} \t{weight}")
+            
+    print(f"\nTotal MST Cost: {total_cost}")
+
+if __name__ == "__main__":
+    print("=== Kruskal's Algorithm ===")
+    v = int(input("Enter number of vertices: "))
+    e = int(input("Enter number of edges: "))
+    
+    edges = []
+    print("Enter each edge as: Vertex1 Vertex2 Weight (space-separated)")
+    for i in range(e):
+        u, v_node, w = map(int, input(f"Edge {i+1}: ").split())
+        edges.append([u, v_node, w])
+        
+    kruskal_mst(v, edges)

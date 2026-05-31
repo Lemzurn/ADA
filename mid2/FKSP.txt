@@ -1,0 +1,31 @@
+def fractional_knapsack(capacity, items):
+    items.sort(key=lambda x: x[0] / x[1], reverse=True)
+    total_value = 0.0
+    print("\n--- Knapsack Processing ---")
+    for value, weight in items:
+        if capacity >= weight:
+            # Take the whole item
+            capacity -= weight
+            total_value += value
+            print(f"Taken full item: Value = {value}, Weight = {weight}")
+        else:
+            # Take a fraction of the remaining item
+            fraction = capacity / weight
+            total_value += value * fraction
+            print(f"Taken {fraction*100:.2f}% of item: Value = {value}, Weight = {weight}")
+            break  # Knapsack is now completely full
+            
+    return total_value
+if __name__ == "__main__":
+    print("=== Fractional Knapsack ===")
+    n = int(input("Enter the number of items: "))
+    capacity = float(input("Enter the maximum capacity of the knapsack: "))
+    
+    items = []
+    print("Enter each item as: Value Weight (space-separated)")
+    for i in range(n):
+        v, w = map(float, input(f"Item {i+1}: ").split())
+        items.append([v, w])
+        
+    max_val = fractional_knapsack(capacity, items)
+    print(f"\nMaximum total value in the knapsack: {max_val:.2f}")

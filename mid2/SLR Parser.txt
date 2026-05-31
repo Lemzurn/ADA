@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+char input[20];
+char stack[30];
+int top = -1;
+int input_pointer = 0;
+void push(char c) {
+    if (top >= 29) {
+        printf("Stack Overflow\n");
+        exit(1);
+    }
+    stack[++top] = c;
+}
+
+void pop() {
+    if (top == -1) {
+        printf("Stack Underflow\n");
+        exit(1);
+    }
+    top--;
+}
+
+void throw_error() {
+    printf("\nInvalid Input: Parsing Failed\n");
+    exit(1);
+}
+
+void display_status() {
+    printf("\n");
+    for (int i = 0; i <= top; i++) {
+        printf("%c", stack[i]);
+    }
+    printf("\t\t");
+    int i = input_pointer;
+    while (input[i] != '\0') {
+        printf("%c", input[i++]);
+    }
+}
+
+int main() {
+    printf("Enter the input to be parsed (end with $): ");
+    scanf("%s", input);
+    push('0'); 
+    printf("\nSTACK \t\t INPUT");
+    printf("\n-----------------------------");
+    while (1) {
+        display_status();
+        char current_state = stack[top];
+        char current_input = input[input_pointer];
+        switch (current_state) {
+            case '0':
+            case '4':
+            case '6':
+            case '7':
+                if (current_input == 'i') {
+                    input_pointer++;
+                    push('i');
+                    push('5'); // Go to state 5
+                } else if (current_input == '(') {
+                    input_pointer++;
+                    push('(');
+                    push('4'); // Go to state 4
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '1':
+                if (current_input == '+') {
+                    input_pointer++;
+                    push('+');
+                    push('6'); // Shift to state 6
+                } else if (current_input == '$') {
+                    printf("\n\nSuccessfully Parsed!\n");
+                    exit(0);
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '2':
+                if (current_input == '*') {
+                    input_pointer++;
+                    push('*');
+                    push('7'); // Shift to state 7
+                } else if (current_input == '+' || current_input == ')' || current_input == '$') {
+                    pop(); pop(); 
+                    push('E');
+                    if (stack[top - 1] == '0') push('1');
+                    else if (stack[top - 1] == '4') push('8');
+                    else throw_error();
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '3':
+                if (current_input == '+' || current_input == '*' || current_input == ')' || current_input == '$') {
+                    pop(); pop();
+                    push('T');
+                    if (stack[top - 1] == '0' || stack[top - 1] == '4') push('2');
+                    else if (stack[top - 1] == '6') push('9');
+                    else throw_error();
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '5':
+                if (current_input == '+' || current_input == '*' || current_input == ')' || current_input == '$') {
+                    pop(); pop();
+                    push('F');
+                    if (stack[top - 1] == '0' || stack[top - 1] == '4' || stack[top - 1] == '6') push('3');
+                    else if (stack[top - 1] == '7') push('@');
+                    else throw_error();
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '8':
+                if (current_input == '+') {
+                    input_pointer++;
+                    push('+');
+                    push('6');
+                } else if (current_input == ')') {
+                    input_pointer++;
+                    push(')');
+                    push('#');
+                } else {
+                    throw_error();
+                }
+                break;
+
+            case '9': 
+            case '@': 
+            case '#': 
+                if (current_input == '+' || current_input == '*' || current_input == ')' || current_input == '$') {
+                    pop(); pop(); pop(); pop(); pop(); pop(); 
+                    if (current_state == '9') push('E');
+                    else if (current_state == '@') push('T');
+                    else if (current_state == '#') push('F');
+                    char exposed_state = stack[top - 1];
+                    if (current_state == '9') {
+                        if (exposed_state == '0') push('1');
+                        else if (exposed_state == '4') push('8');
+                    } else if (current_state == '@') {
+                         if (exposed_state == '0' || exposed_state == '4') push('2');
+                         else if (exposed_state == '6') push('9');
+                    } else if (current_state == '#') {
+                         if (exposed_state == '0' || exposed_state == '4' || exposed_state == '6') push('3');
+                         else if (exposed_state == '7') push('@');
+                    }
+                } else {
+                    throw_error();
+                }
+                break;
+
+            default:
+                throw_error();
+        }
+    }
+    return 0;
+}

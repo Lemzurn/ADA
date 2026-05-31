@@ -1,0 +1,38 @@
+def prim_mst(graph, vertices):
+    selected = [False] * vertices
+    selected[0] = True  # Start from the first vertex (0)
+    edges_count = 0
+    total_cost = 0
+    print("\n--- Minimum Spanning Tree ---")
+    print("Edge \tWeight")
+    while edges_count < vertices - 1:
+        minimum_weight = float('inf')
+        u = 0
+        v = 0
+        for i in range(vertices):
+            if selected[i]:
+                for j in range(vertices):
+                    if not selected[j] and graph[i][j] != 0:  
+                        if graph[i][j] < minimum_weight:
+                            minimum_weight = graph[i][j]
+                            u = i
+                            v = j
+                            
+        selected[v] = True
+        edges_count += 1
+        total_cost += minimum_weight
+        print(f"{u} - {v} \t{minimum_weight}")
+        
+    print(f"\nTotal MST Cost: {total_cost}")
+
+if __name__ == "__main__":
+    print("=== Prim's Algorithm ===")
+    v = int(input("Enter the number of vertices: "))
+    print(f"Enter the adjacency matrix ({v}x{v}), row by row (space-separated, use 0 for no edge):")
+    
+    graph = []
+    for i in range(v):
+        row = list(map(int, input(f"Row {i+1}: ").split()))
+        graph.append(row)
+        
+    prim_mst(graph, v)

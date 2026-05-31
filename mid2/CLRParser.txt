@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+char stack[20];
+char input[20];
+int top = -1;
+void push(char c) {
+    stack[++top] = c;
+}
+
+void pop() {
+    top--;
+}
+
+void display_state(int input_index) {
+    printf("\n");
+    for (int i = 0; i <= top; i++) {
+        printf("%c", stack[i]);
+    }
+    printf("\t\t");
+    for (int i = input_index; i < strlen(input); i++) {
+        printf("%c", input[i]);
+    }
+}
+
+int main() {
+    printf("Enter string (e.g., id+id): ");
+    scanf("%s", input);
+    
+    int len = strlen(input);
+    printf("\nSTACK \t\t INPUT");
+    printf("\n-----------------------------");
+
+    for (int i = 0; i < len; i++) {
+        push(input[i]);
+        display_state(i + 1);
+        if (top >= 1 && stack[top] == 'd' && stack[top-1] == 'i') {
+            pop(); pop();
+            push('E');
+            printf("\t(Reduce E -> id)");
+            display_state(i + 1);
+        }
+        if (top >= 2 && stack[top] == 'E' && stack[top-1] == '+' && stack[top-2] == 'E') {
+            pop(); pop(); pop();
+            push('E');           
+            printf("\t(Reduce E -> E+E)");
+            display_state(i + 1);
+        }
+    }
+
+    // ACCEPT: If the stack has exactly 1 item left (top == 0) and it is 'E'
+    if (top == 0 && stack[top] == 'E') {
+        printf("\n\nAccepted: Parsing Successful!\n");
+    } else {
+        printf("\n\nRejected: Parsing Failed.\n");
+    }
+
+    return 0;
+}

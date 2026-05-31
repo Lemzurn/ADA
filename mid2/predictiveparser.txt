@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char input[20];
+char stack[20];
+int top = -1;
+int input_pointer = 0;
+void push(char c) {
+    if (top == 19) {
+        printf("\nError: Stack overflow\n");
+        exit(1);
+    }
+    stack[++top] = c;
+}
+
+void pop() {
+    if (top == -1) {
+        printf("\nError: Stack underflow\n");
+        exit(1);
+    }
+    top--;
+}
+
+void display_stack() {
+    for (int i = 0; i <= top; i++) printf("%c", stack[i]);
+}
+
+void display_input() {
+    int i = input_pointer;
+    while (input[i] != '\0') printf("%c", input[i++]);
+}
+
+int main() {
+    printf("\nEnter input ending with $ (e.g., i+i$): ");
+    scanf("%s", input);
+
+    push('$');
+    push('E');
+
+    printf("\nSTACK\t\tINPUT\n");
+    printf("------------------------\n");
+
+    while (1) {
+        display_stack();
+        printf("\t\t");
+        display_input();
+        printf("\n");
+
+        char stack_top = stack[top];
+        char current_input = input[input_pointer];
+        if (stack_top == '$' && current_input == '$') {
+            printf("\nParsing Successful!\n");
+            break;
+        }
+        
+        else if (stack_top == current_input) {
+            input_pointer++; 
+            pop();           
+        }
+        
+        else if (stack_top == 'E') {
+            if (current_input == 'i' || current_input == '(') {
+                // Rule: E -> T A
+                pop(); 
+                push('A'); 
+                push('T'); 
+            } else {
+                printf("\nSyntax Error at E\n"); break;
+            }
+        } 
+        
+        else if (stack_top == 'A') {
+            if (current_input == '+') {
+                pop(); 
+                push('A'); 
+                push('T'); 
+                push('+'); 
+            } else if (current_input == ')' || current_input == '$') {
+                pop(); 
+            } else {
+                printf("\nSyntax Error at A\n"); break;
+            }
+        } 
+        
+        else if (stack_top == 'T') {
+            if (current_input == 'i' || current_input == '(') {
+                pop(); 
+                push('B'); 
+                push('F'); 
+            } else {
+                printf("\nSyntax Error at T\n"); break;
+            }
+        } 
+        
+        else if (stack_top == 'B') {
+            if (current_input == '*') {
+                pop(); 
+                push('B'); 
+                push('F'); 
+                push('*'); 
+            } else if (current_input == '+' || current_input == ')' || current_input == '$') {
+                pop(); 
+            } else {
+                printf("\nSyntax Error at B\n"); break;
+            }
+        } 
+        
+        else if (stack_top == 'F') {
+            if (current_input == 'i') {
+                pop(); 
+                push('i'); 
+            } else if (current_input == '(') {
+                pop(); 
+                push(')'); 
+                push('E'); 
+                push('('); 
+            } else {
+                printf("\nSyntax Error at F\n"); break;
+            }
+        } 
+        
+        else {
+            printf("\nUnknown symbol in stack\n"); break;
+        }
+    }
+    
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+char lookahead; 
+void match(char expected_char) {
+    if (lookahead == expected_char) {
+        lookahead = getchar(); // Move to the next character in the input
+    } else {
+        printf("Invalid Input\n");
+        exit(0);
+    }
+}
+void B() {
+    if (lookahead == 'b') {
+        match('b');
+    } else {
+        printf("Invalid Input\n");
+        exit(0);
+    }
+}
+void A() {
+    if (lookahead == 'a') {
+        match('a');
+        B();        // If we see an 'a', a 'b' MUST immediately follow it
+    } else {
+        return;     // Epsilon transition: if it's not 'a', just do nothing
+    }
+}
+void S() {
+    A();
+    A();
+}
+int main() {
+    printf("Enter String with $ at the end:\n");
+    lookahead = getchar(); 
+    S(); 
+    if (lookahead == '$') {
+        printf("\nParsing Successful\n");
+    } else {
+        printf("\nInvalid Input\n");
+    }
+    
+    return 0;
+}
