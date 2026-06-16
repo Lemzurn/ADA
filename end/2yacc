@@ -1,0 +1,59 @@
+gm2.l
+
+%{ 
+    #include "y.tab.h" 
+%} 
+
+%% 
+[aA]    { return A; } 
+[bB]    { return B; } 
+\n      { return NL; } 
+.       { return yytext[0]; } 
+%% 
+
+int yywrap() { 
+    return 1;
+}
+
+
+gm2.y
+
+%{ 
+    #include <stdio.h> 
+    #include <stdlib.h> 
+    int yyerror(char *msg);
+    int yylex();
+%} 
+
+%token A B NL 
+
+%% 
+stmt: S NL { 
+        printf("Valid string! Equal number of A's and B's.\n"); 
+        exit(0); 
+      } 
+; 
+
+S: A S B 
+ | 
+; 
+
+%% 
+
+int yyerror(char *msg) { 
+    printf("Invalid string!\n"); 
+    exit(0); 
+} 
+
+int main() { 
+    printf("Enter the string (e.g., aabb):\n"); 
+    yyparse();
+    return 0;
+}
+
+
+
+lex gm2.l
+yacc gm2.y -d
+cc lex.yy.c y.tab.c -w
+./a.out
