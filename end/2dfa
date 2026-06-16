@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[100];
+    int state = 0; // Initial state
+    
+    printf("Enter a string of 0s and 1s: ");
+    scanf("%s", str);
+    
+    for (int i = 0; i < strlen(str); i++) {
+        char c = str[i];
+        
+        if (state == 0) {
+            if (c == '0') state = 1;
+            else state = 0;
+        } 
+        else if (state == 1) {
+            if (c == '1') state = 2; // "01" found!
+            else if (c == '0') state = 1; // still holding at '0'
+            else state = 0;
+        } 
+        else if (state == 2) {
+            // Once we reach state 2, we stay here (trap state) because we already found the substring.
+            state = 2; 
+        }
+    }
+    
+    if (state == 2) {
+        printf("String ACCEPTED (It contains '01')\n");
+    } else {
+        printf("String REJECTED (It does not contain '01')\n");
+    }
+    return 0;
+}
+
+
+%{
+#include <stdio.h>
+%}
+
+%%
+^[01]*01[01]*$ { printf("Accepted : contains substring 01\n"); }
+^[01]+$        { printf("Rejected : Doesnot contain substring 01\n"); }
+\n|.           ;
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a binary string:\n");
+    yylex();
+    return 0;
+}
