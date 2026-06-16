@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+char input[100];
+int i = 0; // Global index to track current character
+
+void S();
+void A();
+void B();
+
+void S() {
+    A(); // S -> AB means call A(), then call B()
+    B();
+}
+
+void A() {
+    // A -> a | epsilon
+    if (input[i] == 'a') {
+        i++; // Consume 'a'
+    }
+    // Else do nothing (epsilon transition)
+}
+
+void B() {
+    // B -> b | epsilon
+    if (input[i] == 'b') {
+        i++; // Consume 'b'
+    }
+    // Else do nothing (epsilon transition)
+}
+
+int main() {
+    printf("Grammar: S->AB, A->a|E, B->b|E\n");
+    printf("Enter a string (valid strings: empty, a, b, ab): ");
+    scanf("%s", input);
+    
+    S(); // Start parsing from the start symbol
+    
+    // If we successfully consumed the whole string up to the null terminator
+    if (input[i] == '\0') {
+        printf("String successfully parsed!\n");
+    } else {
+        printf("Error: Invalid string!\n");
+    }
+    return 0;
+}
