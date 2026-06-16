@@ -50,3 +50,10 @@ int main() {
     yyparse();
     return 0;
 }
+
+
+
+lex gm2.l
+yacc gm2.y -d
+cc lex.yy.c y.tab.c -w
+./a.out
