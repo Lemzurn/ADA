@@ -1,0 +1,40 @@
+def optimal_bst():
+    print("--- Optimal Binary Search Tree ---")
+    n = int(input("Enter the number of keys: "))
+    
+    print("Enter the frequencies of the keys separated by spaces:")
+    freq = list(map(int, input().split()))
+    
+    if len(freq) != n:
+        print("Error: Number of frequencies must match number of keys.")
+        return
+
+    # Create a 2D table to store costs
+    cost = [[0 for _ in range(n)] for _ in range(n)]
+    
+    # Cost of single keys is just their frequency
+    for i in range(n):
+        cost[i][i] = freq[i]
+        
+    # Calculate costs for chains of length 2 to n
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            cost[i][j] = float('inf')
+            
+            # Sum of frequencies in this chain
+            freq_sum = sum(freq[i:j+1])
+            
+            # Try making every key in the chain the root
+            for r in range(i, j + 1):
+                c = 0
+                if r > i: c += cost[i][r - 1]
+                if r < j: c += cost[r + 1][j]
+                c += freq_sum
+                
+                if c < cost[i][j]:
+                    cost[i][j] = c
+                    
+    print(f"\nThe minimum cost of the Optimal Binary Search Tree is: {cost[0][n-1]}")
+
+optimal_bst()
